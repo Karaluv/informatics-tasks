@@ -1,5 +1,0 @@
-4
-link
-names
-numbers
-emails

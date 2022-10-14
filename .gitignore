@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -31,6 +30,13 @@
 *.out
 *.app
 
-#folder
-.vscode
-labs_exe
+#folders
+.vs/
+.vscode/
+out/
+build/
+temp/
+
+#cmake
+CMakePresets.json
+
