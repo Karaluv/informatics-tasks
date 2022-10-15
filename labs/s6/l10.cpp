@@ -4,7 +4,7 @@
 #include <vector>
 #include <cassert>
 // include our library
-#include "l10_rect.cpp"
+#include <rectangle/rectangle.cpp>
 
 using namespace std;
 

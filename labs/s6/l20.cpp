@@ -13,7 +13,10 @@
 #include <vector>
 #include <cassert>
 
-#include "l10_rect.cpp"
+#include <rectangle/rectangle.cpp>
+
+//#include <rectangle.cpp>
+// include all_libs.lib
 
 using namespace std;
 
@@ -82,7 +85,7 @@ public:
      */
     ~Grid()
     {
-        cout << "Grid destructor called" << endl;
+        // cout << "Grid destructor called" << endl;
         delete[] data;
     }
     /**
@@ -230,12 +233,10 @@ public:
 /**
  * @brief Class for manipulating with n-dimensional arrays
  * @details Class for manipulating with n-dimensional arrays based on template and recursion
- * @param T - type of array elements
- * @param N - number of dimensions
- * @param MySize - size of array in N dimension
- * @param data - pointer to array of N-1 dimension grid
- * @method get_size - size of array in N dimension
- * @operator [] - returns array row of N-1 dimension grid
+ * @param T type of array elements
+ * @param N number of dimensions
+ * @param MySize size of array in N dimension
+ * @param data pointer to array of N-1 dimension grid
  */
 template <typename T, unsigned N>
 class NGrid final
@@ -261,7 +262,7 @@ public:
     /**
      * @brief Constructor which takes single element and copies it to (1,...,1) grid
      * @details Constructor which takes single element and copies it to (1,...,1) grid
-     * @param value - single element
+     * @param value single element
      */
     NGrid(T const &value)
     {
@@ -273,9 +274,9 @@ public:
     /**
      * @brief Constructor which takes size of array in N dimension and creates grid field with single element
      * @details Constructor which takes size of array in N dimension and creates grid field with single element
-     * @param value - single element
-     * @param size - size of array in N dimension
-     * @param args - size of array in N-1 dimensions
+     * @param value single element
+     * @param size size of array in N dimension
+     * @param args size of array in N-1 dimensions
      */
     template <typename... Args>
     NGrid(T const &value, size_type const size, Args... args)
@@ -294,7 +295,7 @@ public:
      */
     ~NGrid()
     {
-        cout << "NGrid destructor called" << endl;
+        // cout << "NGrid destructor called" << endl;
         delete[] data;
     }
     /**
@@ -312,7 +313,7 @@ public:
     /**
      * @brief copy assignment operator
      * @details copy assignment operator which copies grid field
-     * @param other - reference to NGrid object
+     * @param other reference to NGrid object
      * @return reference to NGrid object
      */
     NGrid &operator=(NGrid const &other)
@@ -330,7 +331,7 @@ public:
     /**
      * @brief move constructor
      * @details move constructor which moves grid field
-     * @param other - grid field to move
+     * @param other grid field to move
      * @return reference to NGrid object
      */
     NGrid(NGrid &&other)
@@ -342,7 +343,7 @@ public:
     /**
      * @brief move assignment operator
      * @details move assignment operator which moves grid field
-     * @param other - reference to NGrid object
+     * @param other reference to NGrid object
      * @return reference to NGrid object
      */
     NGrid &operator=(NGrid &&other)
@@ -378,22 +379,17 @@ public:
 
 int main()
 {
-    // create some tests
     {
-        // 3 dimensional grid
         NGrid<int, 3> grid;
         assert(grid.get_size() == 1);
     }
     cout << "Test 1 passed" << endl;
     {
         NGrid<int, 3> grid(2);
-        // test
         assert(grid.get_size() == 1);
     }
-    // print tests passed
     cout << "Test 2 passed" << endl;
     {
-        // test for 4 dimensional grid
         NGrid<string, 4> grid("test");
         assert(grid.get_size() == 1);
     }
@@ -441,6 +437,64 @@ int main()
         assert(grid[0][0][0][0][0] == rect2);
     }
     cout << "Test 6 passed" << endl;
+    {
+        NGrid<Rectangle, 4> grid(Rectangle(1, 1), 3, 2, 1, 1);
+        NGrid<Rectangle, 4> grid2(grid);
+        NGrid<Rectangle, 4> grid3 = grid;
+        NGrid<Rectangle, 4> grid4 = move(grid);
+        NGrid<Rectangle, 4> grid5(move(grid2));
+
+        assert(grid3[0][0][0][0] == Rectangle(1, 1));
+        assert(grid4[0][0][0][0] == Rectangle(1, 1));
+        assert(grid5[0][0][0][0] == Rectangle(1, 1));
+
+        grid3[0][0][0][0] = Rectangle(2, 2);
+        grid4[0][0][0][0] = Rectangle(3, 3);
+        grid5[0][0][0][0] = Rectangle(4, 4);
+
+        assert(grid3[0][0][0][0] == Rectangle(2, 2));
+        assert(grid4[0][0][0][0] == Rectangle(3, 3));
+        assert(grid5[0][0][0][0] == Rectangle(4, 4));
+
+        grid3 = grid4;
+        grid4 = move(grid5);
+
+        assert(grid3[0][0][0][0] == Rectangle(3, 3));
+        assert(grid4[0][0][0][0] == Rectangle(4, 4));
+
+        NGrid<int, 3> grid6(2, 2, 2);
+        int value = 1;
+        for (int i = 0; i < 2; ++i)
+            for (int j = 0; j < 2; ++j)
+                for (int k = 0; k < 2; ++k)
+                    grid6[i][j][k] = value * 2;
+
+        value = 1;
+        for (int i = 0; i < 2; ++i)
+            for (int j = 0; j < 2; ++j)
+                for (int k = 0; k < 2; ++k)
+                    assert(grid6[i][j][k] == value * 2);
+    }
+    cout << "Test 7 passed" << endl;
+    {
+        for (size_t i = 0; i < 10; ++i)
+        {
+            NGrid<Rectangle, 4> grid(Rectangle(1, 1), 50, 50, 50, 50);
+            NGrid<Rectangle, 4> grid2(grid);
+
+            grid = grid2;
+
+            NGrid<Rectangle, 4> grid3(move(grid));
+
+            grid2 = move(grid3);
+
+            cout << i * 10 << "%\r";
+        }
+        cout << "100%" << endl;
+    }
+    cout << "Test 8 passed" << endl;
     cout << "All tests passed!!!" << endl;
+
+    system("pause");
     return 0;
 }

@@ -1,0 +1,2 @@
+add_subdirectory(rectangle)
+include_directories(rectangle)
